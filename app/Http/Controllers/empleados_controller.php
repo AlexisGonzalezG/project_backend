@@ -20,17 +20,30 @@ class empleados_controller extends Controller
             'domicilio' => $request['domicilio'],
         ]);
 
-        $habilidades = explode(",", $request['habilidad']);
-
-        foreach ($habilidades as $habilidad) {
-            $hab = explode("-", $habilidad);
+        for( $i=0; $i <= count($request['habilidades']) - 1; $i++){
 
             $insert = DB::table('habilidad')->insert([
-                'nombre' => $hab[0],
-                'id_empleado' => $id_empleado,
-                'calificacion' => $hab[1],
+                        'nombre' => $request['habilidades'][$i],
+                        'id_empleado' => $id_empleado,
+                        'calificacion' => $request['calificaciones'][$i]
             ]);
+
         }
+
+        if ($insert) {
+            return ['ok' => 100];
+        } else {
+            return ['ok' => 0];
+        }
+    }
+
+    public function nueva_habilidad(Request $request){
+
+        $insert = DB::table('habilidad')->insert([
+            'nombre' => $request['nombre'],
+            'id_empleado' => $request['id_empleado'],
+            'calificacion' => $request['calificacion']
+        ]);
 
         if ($insert) {
             return ['ok' => 100];
@@ -58,7 +71,7 @@ class empleados_controller extends Controller
             ])
             ->get();
 
-        if ($empleado) {
+        if ( count($empleado) > 0 ) {
             return ['ok' => 100, "datos" => $empleado];
         } else {
             return ['ok' => 0];
@@ -70,7 +83,7 @@ class empleados_controller extends Controller
         $empleados = DB::table('empleados')
             ->get();
 
-        if ($empleados) {
+        if ( count($empleados) > 0 ) {
             return ['ok' => 100, "datos" => $empleados];
         } else {
             return ['ok' => 0];
